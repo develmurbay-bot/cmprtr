@@ -18,8 +18,9 @@ async function applyWatermark(buffer: Buffer, _watermarkText: string, _enabled: 
 
 async function getWatermarkSettings() {
   try {
-    // Get watermark settings from database
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000'}/api/settings`);
+    // Get watermark settings from database using internal API route
+    // This avoids making external HTTP requests during build/deployment
+    const response = await fetch('/api/settings');
     const data = await response.json();
     
     if (data.success) {

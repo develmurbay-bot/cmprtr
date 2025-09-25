@@ -8,8 +8,9 @@ const inter = Inter({ subsets: ['latin'] });
 // Function to fetch settings for metadata
 async function getSettings() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/settings`, {
+    // Use internal API route to avoid external requests during build
+    // This ensures the fetch works both during build time and runtime
+    const response = await fetch('/api/settings', {
       next: { revalidate: 3600 } // Cache for 1 hour, safe for static generation
     });
     
