@@ -1,0 +1,26 @@
+20:58:22.479 
+    at r (.next/server/chunks/4586.js:1:27977)
+20:58:22.479 
+    at <unknown> (.next/server/chunks/4586.js:1:8812)
+20:58:22.479 
+    at <unknown> (.next/server/chunks/4586.js:15:4601)
+20:58:22.479 
+    at e.with (.next/server/chunks/4586.js:22:28575)
+20:58:22.479 
+    at i.with (.next/server/chunks/4586.js:22:22822)
+20:58:22.479 
+    at i.startActiveSpan (.next/server/chunks/4586.js:22:37788)
+20:58:22.479 
+    at e.startActiveSpan (.next/server/chunks/4586.js:22:38322)
+20:58:22.479 
+    at <unknown> (.next/server/chunks/4586.js:15:4109)
+20:58:22.479 
+    at e.with (.next/server/chunks/4586.js:22:28575)
+20:58:22.479 
+    at i.with (.next/server/chunks/4586.js:22:22822) {
+20:58:22.479 
+  description: "Route / couldn't be rendered statically because it used revalidate: 0 fetch https://murbay.id/api/settings /. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+20:58:22.479 
+  digest: 'DYNAMIC_SERVER_USAGE'
+20:58:22.479 
+}

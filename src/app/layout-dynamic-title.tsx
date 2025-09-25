@@ -10,7 +10,7 @@ async function getSettings() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const response = await fetch(`${baseUrl}/api/settings`, {
-      cache: 'no-store'
+      next: { revalidate: 3600 } // Cache for 1 hour, safe for static generation
     });
     
     if (!response.ok) {
@@ -30,7 +30,13 @@ async function getSettings() {
     return {};
   } catch (error) {
     console.error('Error fetching settings for metadata:', error);
-    return {};
+    // Return default values if fetch fails
+    return {
+      company_name: 'Murbay Konveksi',
+      meta_title: 'Murbay Konveksi - Spesialis Garmen dan Konveksi Berkualitas',
+      meta_description: 'Layanan konveksi profesional untuk seragam, pakaian kustom, dan produksi massal. Kualitas tinggi, harga kompetitif, pengalaman 10+ tahun.',
+      meta_keywords: 'konveksi, garmen, seragam, pakaian kustom, jahit, bordir, fashion'
+    };
   }
 }
 

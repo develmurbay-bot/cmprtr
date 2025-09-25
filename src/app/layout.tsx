@@ -10,16 +10,16 @@ async function getSettings() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:8000';
     const response = await fetch(`${baseUrl}/api/settings`, {
-      cache: 'no-store' // Always fetch fresh data
+      next: { revalidate: 3600 } // Cache for 1 hour, safe for static generation
     });
     
     if (response.ok) {
       const data = await response.json();
       if (data.success && data.settings) {
         const settingsObj: Record<string, any> = {};
-      data.settings.forEach((setting: {key: string, value: string}) => {
-        settingsObj[setting.key] = setting.value;
-      });
+        data.settings.forEach((setting: {key: string, value: string}) => {
+          settingsObj[setting.key] = setting.value;
+        });
         return settingsObj;
       }
     }
