@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider     = "sqlite"
+  url          = env("DATABASE_URL")
+  relationMode = "foreignKeys"
+}
+
+model admin_users {
+  id               Int       @id @default(autoincrement())
+  username         String    @unique(map: "sqlite_autoindex_admin_users_1")
+  password         String
+  email            String?
+  full_name        String?
+  role_id          Int?      @default(1)
+  theme_preference String?   @default("adminlte-inspired")
+  created_at       DateTime? @default(now())
+  updated_at       DateTime? @default(now())
+  roles            roles?    @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model contact {
+  id               Int       @id @default(autoincrement())
+  name             String
+  email            String
+  message          String
+  status           String?   @default("new")
+  created_at       DateTime? @default(now())
+  updated_at       DateTime? @default(now())
+  phone            String?
+  subject          String?
+  response_message String?
+}
+
+model faq {
+  id          Int       @id @default(autoincrement())
+  question    String
+  answer      String
+  category    String?
+  order_index Int?      @default(0)
+  created_at  DateTime? @default(now())
+  updated_at  DateTime? @default(now())
+}
+
+model gallery {
+  id         Int       @id @default(autoincrement())
+  title      String
+  image_url  String
+  category   String?
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+}
+
+model news {
+  id             Int       @id @default(autoincrement())
+  title          String
+  content        String
+  featured_image String?
+  published_at   DateTime?
+  status         String?   @default("draft")
+  created_at     DateTime? @default(now())
+  updated_at     DateTime? @default(now())
+}
+
+model roles {
+  id          Int           @id @default(autoincrement())
+  name        String        @unique(map: "sqlite_autoindex_roles_1")
+  description String?
+  permissions String?
+  created_at  DateTime?     @default(now())
+  admin_users admin_users[]
+}
+
+model services {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  image_url   String?
+  created_at  DateTime? @default(now())
+  updated_at  DateTime? @default(now())
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model settings {
+  key        String?   @id
+  value      String?
+  updated_at DateTime? @default(now())
+
+  @@ignore
+}
+
+model testimonials {
+  id             Int       @id @default(autoincrement())
+  name           String
+  content        String
+  customer_photo String?
+  rating         Int?      @default(5)
+  status         String?   @default("pending")
+  created_at     DateTime? @default(now())
+  updated_at     DateTime? @default(now())
+}

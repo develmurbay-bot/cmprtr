@@ -1,0 +1,43 @@
+# Dependency directories
+node_modules/
+
+# Environment variables
+.env*
+!.env.example
+
+# Next.js
+.next/
+out/
+
+# Database
+*.db
+*.db-journal
+
+# Build outputs
+dist/
+build/
+
+# Logs
+*.log
+
+# zip
+*.zip
+*.rar
+*.7z
+*.tar.gz
+*.tar
+*.gz
+*.db
+*.db-journal
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store

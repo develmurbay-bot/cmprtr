@@ -1,0 +1,9 @@
+export { default as CompanyTab } from './CompanyTab';
+export { default as ContactTab } from './ContactTab';
+export { default as AboutTab } from './AboutTab';
+export { default as SocialTab } from './SocialTab';
+export { default as MapsTab } from './MapsTab';
+export { default as WatermarkTab } from './WatermarkTab';
+export { default as SEOTab } from './SEOTab';
+export { default as DisplayTab } from './DisplayTab';
+export type { Settings, SettingsTabProps } from './types';
