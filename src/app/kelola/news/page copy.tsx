@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface NewsArticle {
   id: number;
@@ -59,7 +60,7 @@ export default function NewsManagementPage() {
   }, [user, router]);
 
   // Fetch news articles
-  const fetchNews = async () => {
+  const fetchNews = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
@@ -80,13 +81,13 @@ export default function NewsManagementPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter]);
 
   useEffect(() => {
     if (user) {
       fetchNews();
     }
-  }, [user, statusFilter]);
+  }, [user, fetchNews]);
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -176,8 +177,7 @@ export default function NewsManagementPage() {
   );
 
   // Generate featured image URL
-  const generateImageUrl = (title: string) => {
-    const cleanTitle = title.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '+');
+  const generateImageUrl = (_title: string) => { // eslint-disable-line @typescript-eslint/no-unused-vars
     return `https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/6a0da121-8593-423c-b3d7-e625a87c4436.png}+News+Article`;
   };
 
@@ -259,9 +259,11 @@ export default function NewsManagementPage() {
                 />
                 {formData.featured_image && (
                   <div className="mt-2">
-                    <img 
+                    <Image 
                       src={formData.featured_image} 
                       alt="Preview" 
+                      width={400}
+                      height={128}
                       className="w-full h-32 object-cover rounded border"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
@@ -381,9 +383,11 @@ export default function NewsManagementPage() {
                     <TableRow key={article.id}>
                       <TableCell>
                         {article.featured_image && (
-                          <img 
+                          <Image 
                             src={article.featured_image} 
                             alt={article.title}
+                            width={64}
+                            height={48}
                             className="w-16 h-12 object-cover rounded"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;

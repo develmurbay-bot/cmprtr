@@ -40,11 +40,28 @@ export async function GET(request: NextRequest) {
     }
 
     const totalResult = db.query(countQuery, countParams);
-    const total = totalResult[0]?.total || 0;
+    // Extract total value - depending on database driver, it might be in different formats
+    let total = 0;
+    if (totalResult && totalResult.length > 0) {
+      const row = totalResult[0];
+      // Handle different possible structures of the count result
+      if (typeof row === 'object' && row !== null) {
+        if ('total' in row) {
+          const rowTotal = row.total;
+          total = typeof rowTotal === 'number' ? rowTotal : typeof rowTotal === 'string' ? parseInt(rowTotal) || 0 : 0;
+        } else if (Object.values(row)[0] !== undefined) {
+          // If the count is returned as the first value in the row object
+          const firstValue = Object.values(row)[0];
+          total = typeof firstValue === 'number' ? firstValue : typeof firstValue === 'string' ? parseInt(firstValue) || 0 : 0;
+        }
+      }
+    }
 
     // Get categories for filtering
     const categoriesResult = db.query('SELECT DISTINCT category FROM faq ORDER BY category');
-    const categories = categoriesResult.map((row: { category: string }) => row.category);
+    const categories = categoriesResult.map((row: Record<string, unknown>) => 
+      typeof row.category === 'string' ? row.category : String(row.category || '')
+    );
 
     return NextResponse.json({
       success: true,
@@ -89,7 +106,22 @@ export async function POST(request: NextRequest) {
         'SELECT MAX(order_index) as max_order FROM faq WHERE category = ?',
         [category || 'General']
       );
-      finalOrderIndex = (maxOrderResult[0]?.max_order || 0) + 1;
+      
+      // Extract max_order value - similar to the total handling
+      let maxOrder = 0;
+      if (maxOrderResult && maxOrderResult.length > 0) {
+        const row = maxOrderResult[0];
+        if (typeof row === 'object' && row !== null) {
+          if ('max_order' in row) {
+            const rowMaxOrder = row.max_order;
+            maxOrder = typeof rowMaxOrder === 'number' ? rowMaxOrder : typeof rowMaxOrder === 'string' ? parseInt(rowMaxOrder) || 0 : 0;
+          } else if (Object.values(row)[0] !== undefined) {
+            const firstValue = Object.values(row)[0];
+            maxOrder = typeof firstValue === 'number' ? firstValue : typeof firstValue === 'string' ? parseInt(firstValue) || 0 : 0;
+          }
+        }
+      }
+      finalOrderIndex = maxOrder + 1;
     }
     
     const result = db.run(

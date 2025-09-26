@@ -1,6 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
+
+interface SettingItem {
+  key: string;
+  value: string;
+}
+
+interface SettingsResponse {
+  success: boolean;
+  settings: SettingItem[];
+}
 
 interface AboutSettings {
   company_name: string;
@@ -24,11 +35,11 @@ export default function AboutSection() {
   const fetchSettings = async () => {
     try {
       const response = await fetch('/api/settings');
-      const data = await response.json();
+      const data: SettingsResponse = await response.json();
       if (data.success && data.settings) {
         // Convert array of key-value pairs to flat object
-        const settingsObj: any = {};
-        data.settings.forEach((setting: any) => {
+        const settingsObj: Record<string, string> = {};
+        data.settings.forEach((setting: SettingItem) => {
           settingsObj[setting.key] = setting.value;
         });
         
@@ -46,7 +57,7 @@ export default function AboutSection() {
         
         setSettings(mappedSettings);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching settings:', error);
     } finally {
       setLoading(false);
@@ -177,17 +188,15 @@ export default function AboutSection() {
           </div>
         </div>
 
-        {/* Company Image Placeholder */}
+        {/* Company Image */}
         <div className="mt-12 text-center">
           <div className="relative inline-block">
-            <img
+            <Image
               src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/070dda0a-cd1b-4825-8900-453226097b51.png"
               alt="Murbay Konveksi - Fasilitas Produksi Profesional"
+              width={800}
+              height={400}
               className="rounded-lg shadow-lg max-w-full h-auto"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-              }}
             />
           </div>
         </div>

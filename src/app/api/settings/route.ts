@@ -12,8 +12,8 @@ export async function GET() {
     const rows = db.query('SELECT key, value FROM settings') as Array<{key: string, value: string}>;
     
     // Convert rows to settings object
-    const dbSettings: Record<string, any> = {};
-    rows.forEach((row: {key: string, value: string}) => {
+    const dbSettings: Record<string, unknown> = {};
+    rows.forEach(row => {
       try {
         // Try to parse as JSON, fallback to string
         dbSettings[row.key] = JSON.parse(row.value);

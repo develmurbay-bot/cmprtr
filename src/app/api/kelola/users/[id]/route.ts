@@ -1,12 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/database';
 
+// Define the expected types for parameters
+interface ContextParams {
+  id: string;
+}
+
+interface RouteContext {
+  params: Promise<ContextParams>;
+}
+
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  ctx: RouteContext
 ) {
   try {
-    const userId = parseInt(params.id);
+    const { id } = await ctx.params;
+    const userId = parseInt(id);
     const { username, password, email, full_name, role_id } = await request.json();
 
     if (!username) {
@@ -59,7 +69,6 @@ export async function PUT(
       success: true,
       message: 'User berhasil diupdate'
     });
-
   } catch (error) {
     console.error('Error updating user:', error);
     return NextResponse.json(
@@ -71,10 +80,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  ctx: RouteContext
 ) {
   try {
-    const userId = parseInt(params.id);
+    const { id } = await ctx.params;
+    const userId = parseInt(id);
     const db = getDatabase();
     
     // Check if user exists
@@ -93,7 +103,22 @@ export async function DELETE(
       ['admin']
     );
 
-    if (adminUsers[0].count <= 1) {
+    // Extract count value - similar to the total handling
+    let adminCount = 0;
+    if (adminUsers && adminUsers.length > 0) {
+      const row = adminUsers[0];
+      if (typeof row === 'object' && row !== null) {
+        if ('count' in row) {
+          const rowCount = row.count;
+          adminCount = typeof rowCount === 'number' ? rowCount : typeof rowCount === 'string' ? parseInt(rowCount) || 0 : 0;
+        } else if (Object.values(row)[0] !== undefined) {
+          const firstValue = Object.values(row)[0];
+          adminCount = typeof firstValue === 'number' ? firstValue : typeof firstValue === 'string' ? parseInt(firstValue) || 0 : 0;
+        }
+      }
+    }
+
+    if (adminCount <= 1) {
       const userRole = db.query(
         'SELECT r.name FROM admin_users u JOIN roles r ON u.role_id = r.id WHERE u.id = ?',
         [userId]
@@ -121,7 +146,6 @@ export async function DELETE(
       success: true,
       message: 'User berhasil dihapus'
     });
-
   } catch (error) {
     console.error('Error deleting user:', error);
     return NextResponse.json(

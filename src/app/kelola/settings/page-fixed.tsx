@@ -115,8 +115,8 @@ export default function SettingsPage() {
       const data = await response.json();
       
       if (data.success && data.settings) {
-        const settingsObj: any = {};
-        data.settings.forEach((setting: any) => {
+        const settingsObj: Record<string, string> = {};
+        data.settings.forEach((setting: { key: string; value: string }) => {
           settingsObj[setting.key] = setting.value || '';
         });
         setSettings(prev => ({ ...prev, ...settingsObj }));

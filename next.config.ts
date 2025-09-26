@@ -8,23 +8,13 @@ const nextConfig: NextConfig = {
         hostname: 'images.pexels.com',
         pathname: '/photos/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'storage.googleapis.com',
+        pathname: '/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/**',
+      },
     ],
   },
-  typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has ESLint errors.
-    // !! WARN !!
-    ignoreDuringBuilds: true,
-  },
-  outputFileTracingRoot: process.env.NODE_ENV === 'production' ? undefined : undefined,
 }
 
 export default nextConfig

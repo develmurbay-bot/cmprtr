@@ -12,6 +12,16 @@ import ContactSection from '@/components/landing/ContactSection';
 import Footer from '@/components/landing/Footer';
 import WhatsAppButton from '@/components/landing/WhatsAppButton-fixed';
 
+interface SettingItem {
+  key: string;
+  value: string;
+}
+
+interface SettingsResponse {
+  success: boolean;
+  settings: SettingItem[];
+}
+
 interface Settings {
   company_name?: string;
   company_tagline?: string;
@@ -38,11 +48,11 @@ export default function HomePage() {
     const fetchSettings = async () => {
       try {
         const response = await fetch('/api/settings');
-        const data = await response.json();
+        const data: SettingsResponse = await response.json();
         
         if (data.success && data.settings) {
-          const settingsObj: any = {};
-          data.settings.forEach((setting: any) => {
+          const settingsObj: Record<string, string> = {};
+          data.settings.forEach((setting: SettingItem) => {
             settingsObj[setting.key] = setting.value || '';
           });
           setSettings(settingsObj);
@@ -68,7 +78,7 @@ export default function HomePage() {
             }
           }
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching settings:', error);
       } finally {
         setLoading(false);

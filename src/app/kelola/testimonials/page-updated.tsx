@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader,DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -15,6 +15,7 @@ import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import AdminNavigation from '@/components/kelola/AdminNavigation';
 import ImageUpload from '@/components/kelola/ImageUpload';
+import Image from 'next/image';
 
 interface Testimonial {
   id: number;
@@ -58,7 +59,7 @@ export default function TestimonialsManagementPage() {
   const [uploadedImage, setUploadedImage] = useState<string>('');
 
   // Fetch testimonials
-  const fetchTestimonials = async () => {
+  const fetchTestimonials = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
@@ -80,11 +81,11 @@ export default function TestimonialsManagementPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter]);
 
   useEffect(() => {
     fetchTestimonials();
-  }, [statusFilter]);
+  }, [fetchTestimonials]);
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -189,8 +190,7 @@ export default function TestimonialsManagementPage() {
   const paginatedTestimonials = filteredTestimonials.slice(startIndex, startIndex + itemsPerPage);
 
   // Generate customer photo URL
-  const generatePhotoUrl = (name: string) => {
-    const cleanName = name.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '+');
+  const generatePhotoUrl = (_name: string) => { // eslint-disable-line @typescript-eslint/no-unused-vars
     return `https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/74aaeb04-d48e-4b34-843a-d86c4e6307d9.png}+Customer+Photo+Murbay+Konveksi`;
   };
 
@@ -308,9 +308,11 @@ export default function TestimonialsManagementPage() {
                     <div className="mt-2">
                       <Label>Preview Foto</Label>
                       <div className="border rounded-lg p-4 bg-gray-50 mt-2">
-                        <img 
+                        <Image 
                           src={formData.customer_photo} 
                           alt="Preview" 
+                          width={80}
+                          height={80}
                           className="w-20 h-20 object-cover rounded-full border mx-auto"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
@@ -446,9 +448,11 @@ export default function TestimonialsManagementPage() {
                         <TableRow key={testimonial.id}>
                           <TableCell>
                             {testimonial.customer_photo && (
-                              <img 
+                              <Image 
                                 src={testimonial.customer_photo} 
                                 alt={testimonial.name}
+                                width={48}
+                                height={48}
                                 className="w-12 h-12 object-cover rounded-full"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement;

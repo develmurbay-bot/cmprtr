@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
         description: defaultDescription,
       },
     };
-  } catch (error) {
+  } catch (_error) { // eslint-disable-line @typescript-eslint/no-unused-vars
     // Fallback metadata
     return {
       title: 'Murbay Konveksi - Spesialis Garmen dan Konveksi Berkualitas',

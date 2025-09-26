@@ -36,7 +36,7 @@ export default function AdminLogin() {
       } else {
         setError(data.error || 'Login failed');
       }
-    } catch (err) {
+    } catch (_err) { // eslint-disable-line @typescript-eslint/no-unused-vars
       setError('Network error. Please try again.');
     } finally {
       setLoading(false);

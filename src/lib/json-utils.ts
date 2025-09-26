@@ -1,5 +1,5 @@
 // Manual JSON serialization to work around system JSON.stringify issues
-export function safeJsonStringify(obj: any): string {
+export function safeJsonStringify(obj: unknown): string {
   if (obj === null) return 'null';
   if (obj === undefined) return 'undefined';
   if (typeof obj === 'string') return `"${obj.replace(/"/g, '\\"')}"`;

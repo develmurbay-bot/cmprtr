@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import AdminNavigation from '@/components/kelola/AdminNavigation';
 import ImageUpload from '@/components/kelola/ImageUpload';
+import Image from 'next/image';
 
 interface GalleryItem {
   id: number;
@@ -55,7 +56,7 @@ export default function GalleryManagement() {
   const [uploadedImage, setUploadedImage] = useState<string>('');
 
   // Fetch gallery items
-  const fetchGallery = async () => {
+  const fetchGallery = useCallback(async () => {
     try {
       const params = new URLSearchParams();
       if (selectedCategory !== 'all') {
@@ -76,11 +77,11 @@ export default function GalleryManagement() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedCategory]);
 
   useEffect(() => {
     fetchGallery();
-  }, [selectedCategory]);
+  }, [fetchGallery]);
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -158,7 +159,6 @@ export default function GalleryManagement() {
 
   // Generate placeholder image URL
   const generatePlaceholderUrl = (title: string, category: string) => {
-    const encodedTitle = encodeURIComponent(title.replace(/\s+/g, '+'));
     const encodedCategory = encodeURIComponent(category.replace(/\s+/g, '+'));
     return `https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c13d7724-b01e-4331-b562-fa23064a5c51.png}+${encodedCategory}+Murbay+Konveksi+Gallery`;
   };
@@ -279,9 +279,11 @@ export default function GalleryManagement() {
                     <div className="grid gap-2">
                       <Label>Preview Gambar</Label>
                       <div className="border rounded-lg p-4 bg-gray-50">
-                        <img
+                        <Image
                           src={formData.image_url}
                           alt="Preview"
+                          width={500}
+                          height={200}
                           className="w-full h-48 object-cover rounded"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
@@ -368,9 +370,11 @@ export default function GalleryManagement() {
                     {paginatedGallery.map((item) => (
                       <TableRow key={item.id}>
                         <TableCell>
-                          <img
+                          <Image
                             src={item.image_url}
                             alt={item.title}
+                            width={64}
+                            height={64}
                             className="w-16 h-16 object-cover rounded"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;

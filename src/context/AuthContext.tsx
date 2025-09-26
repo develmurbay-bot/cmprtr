@@ -10,7 +10,7 @@ interface User {
   role?: string;
   role_id?: number;
   role_name?: string;
-  permissions?: string;
+  permissions?: Record<string, any> | string;
   theme_preference: string;
 }
 

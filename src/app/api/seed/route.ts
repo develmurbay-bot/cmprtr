@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { seedDatabase } from '@/lib/seed';
 
-export async function POST() {
+export async function POST(_request: NextRequest) { // eslint-disable-line @typescript-eslint/no-unused-vars
   try {
     console.log('Manual database seeding requested...');
     const result = await seedDatabase();
@@ -20,7 +20,7 @@ export async function POST() {
   }
 }
 
-export async function GET() {
+export async function GET(_request: NextRequest) { // eslint-disable-line @typescript-eslint/no-unused-vars
   return NextResponse.json({
     message: 'Use POST method to seed database',
     endpoint: '/api/seed'

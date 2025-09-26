@@ -118,8 +118,8 @@ export default function SettingsPage() {
       const data = await response.json();
       
       if (data.success && data.settings) {
-        const settingsObj: any = {};
-        data.settings.forEach((setting: any) => {
+        const settingsObj: Record<string, string> = {};
+        data.settings.forEach((setting: { key: string; value: string }) => {
           settingsObj[setting.key] = setting.value || '';
         });
         setSettings(prev => ({ ...prev, ...settingsObj }));
@@ -727,10 +727,11 @@ export default function SettingsPage() {
                       <Input
                         id="services_show_count"
                         type="number"
+                        min="1"
+                        max="10"
                         value={settings.services_show_count}
                         onChange={(e) => handleInputChange('services_show_count', e.target.value)}
-                        min="1"
-                        max="20"
+                        placeholder="5"
                       />
                     </div>
                   )}
@@ -750,14 +751,15 @@ export default function SettingsPage() {
                   </div>
                   {settings.gallery_enabled === 'true' && (
                     <div className="space-y-2">
-                      <Label htmlFor="gallery_show_count">Jumlah Gambar Galeri yang Ditampilkan</Label>
+                      <Label htmlFor="gallery_show_count">Jumlah Galeri yang Ditampilkan</Label>
                       <Input
                         id="gallery_show_count"
                         type="number"
+                        min="1"
+                        max="12"
                         value={settings.gallery_show_count}
                         onChange={(e) => handleInputChange('gallery_show_count', e.target.value)}
-                        min="1"
-                        max="20"
+                        placeholder="6"
                       />
                     </div>
                   )}
@@ -767,7 +769,7 @@ export default function SettingsPage() {
                 <div className="border rounded-lg p-4 space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-medium">Section Berita</h3>
+                      <h3 className="font-medium">Section Berita/Artikel</h3>
                       <p className="text-sm text-gray-500">Tampilkan section berita di halaman utama</p>
                     </div>
                     <Switch
@@ -781,10 +783,11 @@ export default function SettingsPage() {
                       <Input
                         id="news_show_count"
                         type="number"
+                        min="1"
+                        max="10"
                         value={settings.news_show_count}
                         onChange={(e) => handleInputChange('news_show_count', e.target.value)}
-                        min="1"
-                        max="20"
+                        placeholder="3"
                       />
                     </div>
                   )}
@@ -808,10 +811,11 @@ export default function SettingsPage() {
                       <Input
                         id="testimonials_show_count"
                         type="number"
+                        min="1"
+                        max="10"
                         value={settings.testimonials_show_count}
                         onChange={(e) => handleInputChange('testimonials_show_count', e.target.value)}
-                        min="1"
-                        max="20"
+                        placeholder="3"
                       />
                     </div>
                   )}
@@ -835,10 +839,11 @@ export default function SettingsPage() {
                       <Input
                         id="faq_show_count"
                         type="number"
+                        min="1"
+                        max="15"
                         value={settings.faq_show_count}
                         onChange={(e) => handleInputChange('faq_show_count', e.target.value)}
-                        min="1"
-                        max="20"
+                        placeholder="5"
                       />
                     </div>
                   )}
@@ -848,8 +853,12 @@ export default function SettingsPage() {
           </TabsContent>
         </Tabs>
 
-        <div className="flex justify-end mt-6">
-          <Button onClick={handleSave} disabled={saving} className="px-6">
+        <div className="flex justify-end pt-6">
+          <Button 
+            onClick={handleSave} 
+            disabled={saving}
+            className="px-8"
+          >
             {saving ? 'Menyimpan...' : 'Simpan Pengaturan'}
           </Button>
         </div>

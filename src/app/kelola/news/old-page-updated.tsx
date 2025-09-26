@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -58,7 +58,7 @@ export default function NewsManagementPage() {
   const [uploadedImage, setUploadedImage] = useState<string>('');
 
   // Fetch news articles
-  const fetchNews = async () => {
+  const fetchNews = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
@@ -80,11 +80,11 @@ export default function NewsManagementPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter]);
 
   useEffect(() => {
     fetchNews();
-  }, [statusFilter]);
+  }, [fetchNews]);
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -189,8 +189,7 @@ export default function NewsManagementPage() {
   const paginatedNews = filteredNews.slice(startIndex, startIndex + itemsPerPage);
 
   // Generate featured image URL
-  const generateImageUrl = (title: string) => {
-    const cleanTitle = title.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '+');
+  const generateImageUrl = (_title: string) => { // eslint-disable-line @typescript-eslint/no-unused-vars
     return `https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/59398c85-5765-48de-b0b0-19aeff01b71c.png}+Murbay+Konveksi+News+Article`;
   };
 

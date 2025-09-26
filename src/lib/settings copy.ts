@@ -237,7 +237,7 @@ export function generateSocialShareUrls(url: string, title: string, description:
   return {
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
     twitter: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
-    whatsapp: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
+    whatsapp: `https://wa.me/?text=${encodedDescription}%20${encodedUrl}`,
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
     youtube: `https://www.youtube.com/sharing/share-offsite/?url=${encodedUrl}`,  };
 }

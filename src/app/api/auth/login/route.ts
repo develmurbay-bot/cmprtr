@@ -51,7 +51,11 @@ export async function POST(request: NextRequest) {
         full_name: user.full_name,
         role: user.role_name,
         role_id: user.role_id,
-        permissions: user.permissions ? JSON.parse(user.permissions) : {},
+        permissions: user.permissions 
+          ? typeof user.permissions === 'string' 
+            ? JSON.parse(user.permissions) 
+            : user.permissions 
+          : {},
         theme_preference: user.theme_preference
       }
     });

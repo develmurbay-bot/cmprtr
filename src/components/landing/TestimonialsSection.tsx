@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import Image from 'next/image';
 
 interface Testimonial {
   id: number;
@@ -15,24 +16,8 @@ export default function TestimonialsSection() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    fetchTestimonials();
-  }, []);
-
-  useEffect(() => {
-    if (testimonials && testimonials.length > 0) {
-      const interval = setInterval(() => {
-        setCurrentIndex((prevIndex) => 
-          prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1
-        );
-      }, 5000); // Auto-rotate every 5 seconds
-
-      return () => clearInterval(interval);
-    }
-  }, [testimonials?.length]);
-
-  const fetchTestimonials = async () => {
+  
+  const fetchTestimonials = useCallback(async () => {
     try {
       const response = await fetch('/api/testimonials?status=approved&limit=50');
       const data = await response.json();
@@ -48,7 +33,27 @@ export default function TestimonialsSection() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchTestimonials();
+  }, [fetchTestimonials]);
+
+  // Use ref to store the latest testimonials value to avoid infinite re-renders
+  const testimonialsRef = useRef(testimonials);
+  testimonialsRef.current = testimonials;
+
+  useEffect(() => {
+    if (testimonials && testimonials.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentIndex((prevIndex) => 
+          prevIndex === testimonialsRef.current.length - 1 ? 0 : prevIndex + 1
+        );
+      }, 5000); // Auto-rotate every 5 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [testimonials.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
@@ -115,9 +120,11 @@ export default function TestimonialsSection() {
                         <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
                           {/* Customer Photo */}
                           <div className="flex-shrink-0">
-                            <img
+                            <Image
                               src={testimonial.customer_photo || "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a175ccbe-294d-47c5-870d-4a8fd4cf0199.png"}
                               alt={testimonial.name}
+                              width={96}
+                              height={96}
                               className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-4 border-gray-100"
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement;
@@ -142,7 +149,7 @@ export default function TestimonialsSection() {
 
                             {/* Testimonial Text */}
                             <blockquote className="text-lg md:text-xl text-gray-700 mb-6 leading-relaxed">
-                              "{testimonial.content}"
+                              &quot;{testimonial.content}&quot;
                             </blockquote>
 
                             {/* Customer Name */}

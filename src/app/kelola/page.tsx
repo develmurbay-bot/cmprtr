@@ -77,8 +77,8 @@ export default function AdminDashboard() {
         const data = await response.json();
         if (data.success && data.settings) {
           // Convert array format to object
-          const settingsObj: any = {};
-          data.settings.forEach((setting: any) => {
+          const settingsObj: Record<string, string> = {};
+          data.settings.forEach((setting: { key: string; value: string }) => {
             settingsObj[setting.key] = setting.value;
           });
           

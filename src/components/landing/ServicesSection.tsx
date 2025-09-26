@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 interface Service {
   id: number;
@@ -93,11 +94,13 @@ export default function ServicesSection() {
                 className="flex transition-transform duration-500 ease-in-out h-full"
                 style={{ transform: `translateX(-${currentIndex * 100}%)` }}
               >
-                {services.map((service, index) => (
+                {services.map((service, _index) => ( // eslint-disable-line @typescript-eslint/no-unused-vars
                   <div key={service.id} className="w-full flex-shrink-0 relative">
-                    <img
+                    <Image
                       src={service.image_url}
                       alt={service.title}
+                      width={600}
+                      height={500}
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
@@ -167,17 +170,19 @@ export default function ServicesSection() {
 
             {/* Service Cards Grid */}
             <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {services.map((service, index) => (
+              {services.map((service, _index) => (
                 <div 
                   key={service.id} 
                   className={`bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-105 ${
-                    index === currentIndex ? 'ring-2 ring-gray-900' : ''
+                    _index === currentIndex ? 'ring-2 ring-gray-900' : ''
                   }`}
-                  onClick={() => goToSlide(index)}
+                  onClick={() => goToSlide(_index)}
                 >
-                  <img
+                  <Image
                     src={service.image_url}
                     alt={service.title}
+                    width={400}
+                    height={300}
                     className="w-full h-48 object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;

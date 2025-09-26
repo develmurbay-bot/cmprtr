@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "set PORT=3000 next dev --turbopack",
+    "dev": "next dev --turbopack",
     "build": "next build",
-    "build:production": "set NODE_ENV=production && next build",
-    "start": "next start",
+    "build:force": "next build --no-lint",
+    "build:ignore-warnings": "CI=false next build",
+    "build:force-ignore": "CI=false next build --no-lint",
+    "build:debug": "NEXT_DEBUG=true next build",
+    "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
-    "build:force": "set ESLINT_NO_DEV_ERRORS=true && next build"
+    "lint:fix": "next lint --fix"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
@@ -40,7 +43,6 @@
     "@radix-ui/react-tooltip": "^1.2.6",
     "@types/bcryptjs": "^3.0.0",
     "@types/better-sqlite3": "^7.6.13",
-    "@types/pg": "^8.11.6",
     "bcryptjs": "^3.0.2",
     "better-sqlite3": "^12.2.0",
     "class-variance-authority": "^0.7.1",
@@ -52,7 +54,6 @@
     "lucide-react": "^0.509.0",
     "next": "^15.3.2",
     "next-themes": "^0.4.6",
-    "pg": "^8.11.3",
     "react": "^19.1.1",
     "react-day-picker": "^9.8.0",
     "react-dom": "^19.1.1",

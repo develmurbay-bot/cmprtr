@@ -51,6 +51,12 @@ export default function SettingsPage() {
     operating_hours_weekday: '',
     operating_hours_saturday: '',
     operating_hours_sunday: '',
+    business_hours_weekday: '',
+    business_hours_saturday: '',
+    business_hours_sunday: '',
+    linkedin_url: '',
+    youtube_url: '',
+    company_email: '',
     services_enabled: 'true',
     services_show_count: '5',
     gallery_enabled: 'true',
@@ -77,8 +83,8 @@ export default function SettingsPage() {
       const data = await response.json();
       
       if (data.success && data.settings) {
-        const settingsObj: any = {};
-        data.settings.forEach((setting: any) => {
+        const settingsObj: Record<string, string> = {};
+        data.settings.forEach((setting: { key: string; value: string }) => {
           settingsObj[setting.key] = setting.value || '';
         });
         setSettings(prev => ({ ...prev, ...settingsObj }));

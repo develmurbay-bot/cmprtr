@@ -38,8 +38,8 @@ export default function ContactSection() {
       const data = await response.json();
       if (data.success && data.settings) {
         // Convert array format to object format
-        const settingsObj: any = {};
-        data.settings.forEach((setting: any) => {
+        const settingsObj: Record<string, string> = {};
+        data.settings.forEach((setting: { key: string; value: string }) => {
           settingsObj[setting.key] = setting.value;
         });
         
@@ -56,7 +56,7 @@ export default function ContactSection() {
         
         setSettings(mappedSettings);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching settings:', error);
     }
   };

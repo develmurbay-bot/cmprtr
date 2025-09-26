@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import HomeButton from '@/components/ui/home-button';
+import Image from 'next/image';
 
 interface NewsArticle {
   id: number;
@@ -25,11 +26,7 @@ export default function NewsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const articlesPerPage = 12;
 
-  useEffect(() => {
-    fetchArticles();
-  }, [currentPage]);
-
-  const fetchArticles = async () => {
+  const fetchArticles = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/news?status=published&limit=${articlesPerPage}&page=${currentPage}`);
@@ -44,7 +41,11 @@ export default function NewsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [articlesPerPage, currentPage]);
+
+  useEffect(() => {
+    fetchArticles();
+  }, [fetchArticles]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('id-ID', {
@@ -126,10 +127,11 @@ export default function NewsPage() {
               {articles.map((article) => (
                 <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
                   <div className="aspect-video relative overflow-hidden">
-                    <img
+                    <Image
                       src={article.featured_image || "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/1248727a-acad-4229-8ffb-d0c8201a0ef3.png"}
                       alt={article.title}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      fill
+                      className="object-cover hover:scale-105 transition-transform duration-300"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.src = "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/1248727a-acad-4229-8ffb-d0c8201a0ef3.png";

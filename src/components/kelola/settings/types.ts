@@ -33,9 +33,12 @@ export interface Settings {
   operating_hours_weekday: string;
   operating_hours_saturday: string;
   operating_hours_sunday: string;
-  bussiness_hours_weekday: string;
-  bussiness_hours_saturday: string;
-  bussiness_hours_sunday: string;
+  business_hours_weekday: string;
+  business_hours_saturday: string;
+  business_hours_sunday: string;
+  linkedin_url: string;
+  youtube_url: string;
+  company_email?: string;
   services_enabled: string;
   services_show_count: string;
   gallery_enabled: string;

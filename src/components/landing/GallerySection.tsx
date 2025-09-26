@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 interface GalleryItem {
   id: number;
@@ -59,9 +60,11 @@ export default function GallerySection() {
             {gallery.map((item) => (
               <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <div className="aspect-w-16 aspect-h-12 bg-gray-200">
-                  <img
+                  <Image
                     src={item.image_url}
                     alt={item.title}
+                    width={400}
+                    height={300}
                     className="w-full h-64 object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;

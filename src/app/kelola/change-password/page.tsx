@@ -62,22 +62,34 @@ export default function ChangePasswordPage() {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          current_password: formData.current_password,
-          new_password: formData.new_password
+          currentPassword: formData.current_password,
+          newPassword: formData.new_password,
+          confirmPassword: formData.confirm_password
         })
       });
 
-      const data = await response.json();
-
-      if (data.success) {
-        toast.success('Password berhasil diubah');
-        setFormData({
-          current_password: '',
-          new_password: '',
-          confirm_password: ''
-        });
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Success response data:', data);
+        
+        if (data.success) {
+          toast.success(data.message || 'Password berhasil diubah');
+          setFormData({
+            current_password: '',
+            new_password: '',
+            confirm_password: ''
+          });
+        } else {
+          toast.error(data.error || 'Gagal mengubah password');
+        }
       } else {
-        toast.error(data.error || 'Gagal mengubah password');
+        // Handle error response with JSON body
+        const errorData = await response.json();
+        console.log('Error response data:', errorData);
+        toast.error(errorData.error || 'Gagal mengubah password');
       }
     } catch (error) {
       console.error('Error changing password:', error);

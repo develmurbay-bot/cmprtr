@@ -6,6 +6,16 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 
+interface SettingItem {
+  key: string;
+  value: string;
+}
+
+interface SettingsResponse {
+  success: boolean;
+  settings: SettingItem[];
+}
+
 interface Settings {
   contact_phone: string;
   contact_email: string;
@@ -81,11 +91,11 @@ export default function ContactSection() {
   const fetchSettings = async () => {
     try {
       const response = await fetch('/api/settings');
-      const data = await response.json();
+      const data: SettingsResponse = await response.json();
       if (data.success && data.settings) {
         // Convert array of key-value pairs to flat object
-        const settingsObj: any = {};
-        data.settings.forEach((setting: any) => {
+        const settingsObj: Record<string, string> = {};
+        data.settings.forEach((setting: SettingItem) => {
           settingsObj[setting.key] = setting.value;
         });
         
@@ -192,7 +202,7 @@ export default function ContactSection() {
       } else {
         setSubmitStatus('error');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting form:', error);
       setSubmitStatus('error');
     } finally {

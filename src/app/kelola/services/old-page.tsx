@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import Image from 'next/image';
 
 interface Service {
   id: number;
@@ -58,7 +59,7 @@ export default function ServicesManagement() {
       } else {
         setServices([]);
       }
-    } catch (err) {
+    } catch {
       setError('Failed to load services');
       setServices([]);
     } finally {
@@ -91,7 +92,7 @@ export default function ServicesManagement() {
         const data = await response.json();
         setError(data.error || 'Operation failed');
       }
-    } catch (err) {
+    } catch {
       setError('Network error occurred');
     }
   };
@@ -121,7 +122,7 @@ export default function ServicesManagement() {
       } else {
         setError('Failed to delete service');
       }
-    } catch (err) {
+    } catch {
       setError('Network error occurred');
     }
   };
@@ -295,9 +296,11 @@ export default function ServicesManagement() {
                             {startIndex + index + 1}
                           </TableCell>
                           <TableCell>
-                            <img
+                            <Image
                               src={service.image_url || "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/8a9f92c8-8dd7-4ea1-9c04-f531f34b1bc7.png"}
                               alt={service.title}
+                              width={64}
+                              height={40}
                               className="w-16 h-10 object-cover rounded"
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement;

@@ -150,8 +150,8 @@ export default function SettingsPage() {
       const data = await response.json();
       
       if (data.success && data.settings) {
-        const settingsObj: any = {};
-        data.settings.forEach((setting: any) => {
+        const settingsObj: Record<string, string> = {};
+        data.settings.forEach((setting: { key: string; value: string }) => {
           settingsObj[setting.key] = setting.value || '';
         });
         setSettings(prev => ({ ...prev, ...settingsObj }));
@@ -749,3 +749,314 @@ export default function SettingsPage() {
                                 onChange={(e) => handleInputChange('social_instagram', e.target.value)}
                                 placeholder="https://instagram.com/murbaykonveksi"
                               />
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="social_twitter">Twitter URL</Label>
+                              <Input
+                                id="social_twitter"
+                                value={settings.social_twitter}
+                                onChange={(e) => handleInputChange('social_twitter', e.target.value)}
+                                placeholder="https://twitter.com/murbaykonveksi"
+                              />
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="social_linkedin">LinkedIn URL</Label>
+                              <Input
+                                id="social_linkedin"
+                                value={settings.social_linkedin}
+                                onChange={(e) => handleInputChange('social_linkedin', e.target.value)}
+                                placeholder="https://linkedin.com/company/murbaykonveksi"
+                              />
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="social_youtube">YouTube URL</Label>
+                              <Input
+                                id="social_youtube"
+                                value={settings.social_youtube}
+                                onChange={(e) => handleInputChange('social_youtube', e.target.value)}
+                                placeholder="https://youtube.com/@murbaykonveksi"
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Watermark Tab */}
+          <TabsContent value="watermark">
+            <Card>
+              <CardHeader>
+                <CardTitle>Pengaturan Watermark</CardTitle>
+                <CardDescription>
+                  Kelola watermark untuk gambar yang diupload
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="watermark_enabled"
+                    checked={settings.watermark_enabled === 'true'}
+                    onCheckedChange={(checked) => handleInputChange('watermark_enabled', checked ? 'true' : 'false')}
+                  />
+                  <Label htmlFor="watermark_enabled">Aktifkan Watermark pada Gambar</Label>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="watermark_text">Teks Watermark</Label>
+                  <Input
+                    id="watermark_text"
+                    value={settings.watermark_text}
+                    onChange={(e) => handleInputChange('watermark_text', e.target.value)}
+                    placeholder="Murbay Konveksi"
+                    disabled={settings.watermark_enabled !== 'true'}
+                  />
+                  <p className="text-sm text-gray-500">
+                    Teks ini akan ditambahkan sebagai watermark pada setiap gambar yang diupload
+                  </p>
+                </div>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <h4 className="font-medium text-blue-900 mb-2">Informasi Watermark</h4>
+                  <ul className="text-sm text-blue-800 space-y-1">
+                    <li>• Watermark akan diterapkan secara otomatis saat upload gambar</li>
+                    <li>• Posisi watermark akan ditempatkan di sudut kanan bawah</li>
+                    <li>• Watermark menggunakan transparansi untuk tidak mengganggu gambar</li>
+                    <li>• Pengaturan ini berlaku untuk semua upload gambar baru</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* SEO Tab */}
+          <TabsContent value="seo">
+            <Card>
+              <CardHeader>
+                <CardTitle>SEO Settings</CardTitle>
+                <CardDescription>
+                  Kelola meta tags untuk optimasi mesin pencari
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="meta_title">Meta Title</Label>
+                  <Input
+                    id="meta_title"
+                    value={settings.meta_title}
+                    onChange={(e) => handleInputChange('meta_title', e.target.value)}
+                    placeholder="Murbay Konveksi - Spesialis Garmen & Konveksi Berkualitas Tinggi"
+                  />
+                  <p className="text-sm text-gray-500">Maksimal 60 karakter</p>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="meta_description">Meta Description</Label>
+                  <Textarea
+                    id="meta_description"
+                    value={settings.meta_description}
+                    onChange={(e) => handleInputChange('meta_description', e.target.value)}
+                    placeholder="Layanan konveksi profesional dengan kualitas terbaik. Melayani pembuatan seragam, pakaian kustom, dan produksi massal dengan harga kompetitif."
+                    rows={3}
+                  />
+                  <p className="text-sm text-gray-500">Maksimal 160 karakter</p>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="meta_keywords">Meta Keywords</Label>
+                  <Input
+                    id="meta_keywords"
+                    value={settings.meta_keywords}
+                    onChange={(e) => handleInputChange('meta_keywords', e.target.value)}
+                    placeholder="konveksi, garmen, seragam, pakaian kustom, produksi massal"
+                  />
+                  <p className="text-sm text-gray-500">Pisahkan dengan koma</p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Display Settings Tab */}
+          <TabsContent value="display">
+            <Card>
+              <CardHeader>
+                <CardTitle>Pengaturan Tampilan Section</CardTitle>
+                <CardDescription>
+                  Kelola section mana yang ditampilkan di halaman utama dan jumlah item yang ditampilkan
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <h4 className="font-medium text-blue-900 mb-2">Informasi Pengaturan Tampilan</h4>
+                  <ul className="text-sm text-blue-800 space-y-1">
+                    <li>• Section yang dinonaktifkan tidak akan muncul di halaman utama</li>
+                    <li>• Jumlah item yang ditampilkan dapat disesuaikan untuk setiap section</li>
+                    <li>• Perubahan akan langsung terlihat setelah pengaturan disimpan</li>
+                    <li>• Menu navigasi akan otomatis menyesuaikan dengan section yang aktif</li>
+                  </ul>
+                </div>
+
+                {/* Services Section */}
+                <div className="border rounded-lg p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium">Section Layanan</h3>
+                      <p className="text-sm text-gray-500">Tampilkan section layanan di halaman utama</p>
+                    </div>
+                    <Switch
+                      checked={settings.services_enabled === 'true'}
+                      onCheckedChange={(checked) => handleInputChange('services_enabled', checked ? 'true' : 'false')}
+                    />
+                  </div>
+                  {settings.services_enabled === 'true' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="services_show_count">Jumlah Layanan yang Ditampilkan</Label>
+                      <Input
+                        id="services_show_count"
+                        type="number"
+                        min="1"
+                        max="10"
+                        value={settings.services_show_count}
+                        onChange={(e) => handleInputChange('services_show_count', e.target.value)}
+                        placeholder="5"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Gallery Section */}
+                <div className="border rounded-lg p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium">Section Galeri</h3>
+                      <p className="text-sm text-gray-500">Tampilkan section galeri di halaman utama</p>
+                    </div>
+                    <Switch
+                      checked={settings.gallery_enabled === 'true'}
+                      onCheckedChange={(checked) => handleInputChange('gallery_enabled', checked ? 'true' : 'false')}
+                    />
+                  </div>
+                  {settings.gallery_enabled === 'true' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="gallery_show_count">Jumlah Galeri yang Ditampilkan</Label>
+                      <Input
+                        id="gallery_show_count"
+                        type="number"
+                        min="1"
+                        max="12"
+                        value={settings.gallery_show_count}
+                        onChange={(e) => handleInputChange('gallery_show_count', e.target.value)}
+                        placeholder="6"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* News Section */}
+                <div className="border rounded-lg p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium">Section Berita/Artikel</h3>
+                      <p className="text-sm text-gray-500">Tampilkan section berita di halaman utama</p>
+                    </div>
+                    <Switch
+                      checked={settings.news_enabled === 'true'}
+                      onCheckedChange={(checked) => handleInputChange('news_enabled', checked ? 'true' : 'false')}
+                    />
+                  </div>
+                  {settings.news_enabled === 'true' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="news_show_count">Jumlah Berita yang Ditampilkan</Label>
+                      <Input
+                        id="news_show_count"
+                        type="number"
+                        min="1"
+                        max="10"
+                        value={settings.news_show_count}
+                        onChange={(e) => handleInputChange('news_show_count', e.target.value)}
+                        placeholder="3"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Testimonials Section */}
+                <div className="border rounded-lg p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium">Section Testimoni</h3>
+                      <p className="text-sm text-gray-500">Tampilkan section testimoni di halaman utama</p>
+                    </div>
+                    <Switch
+                      checked={settings.testimonials_enabled === 'true'}
+                      onCheckedChange={(checked) => handleInputChange('testimonials_enabled', checked ? 'true' : 'false')}
+                    />
+                  </div>
+                  {settings.testimonials_enabled === 'true' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="testimonials_show_count">Jumlah Testimoni yang Ditampilkan</Label>
+                      <Input
+                        id="testimonials_show_count"
+                        type="number"
+                        min="1"
+                        max="10"
+                        value={settings.testimonials_show_count}
+                        onChange={(e) => handleInputChange('testimonials_show_count', e.target.value)}
+                        placeholder="3"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* FAQ Section */}
+                <div className="border rounded-lg p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium">Section FAQ</h3>
+                      <p className="text-sm text-gray-500">Tampilkan section FAQ di halaman utama</p>
+                    </div>
+                    <Switch
+                      checked={settings.faq_enabled === 'true'}
+                      onCheckedChange={(checked) => handleInputChange('faq_enabled', checked ? 'true' : 'false')}
+                    />
+                  </div>
+                  {settings.faq_enabled === 'true' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="faq_show_count">Jumlah FAQ yang Ditampilkan</Label>
+                      <Input
+                        id="faq_show_count"
+                        type="number"
+                        min="1"
+                        max="15"
+                        value={settings.faq_show_count}
+                        onChange={(e) => handleInputChange('faq_show_count', e.target.value)}
+                        placeholder="5"
+                      />
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        <div className="flex justify-end pt-6">
+          <Button 
+            onClick={handleSave} 
+            disabled={saving}
+            className="px-8"
+          >
+            {saving ? 'Menyimpan...' : 'Simpan Pengaturan'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/database';
 import { initializeDatabase } from '@/lib/seed';
 
-export async function GET() {
+export async function GET(_request: NextRequest) { // eslint-disable-line @typescript-eslint/no-unused-vars
   try {
     // Initialize database if empty
     await initializeDatabase();

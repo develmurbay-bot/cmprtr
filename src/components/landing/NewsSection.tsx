@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface NewsItem {
   id: number;
@@ -94,9 +95,11 @@ export default function NewsSection() {
                 <article key={article.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                   <Link href={`/news/${article.id}`}>
                     <div className="aspect-w-16 aspect-h-9 bg-gray-200 cursor-pointer">
-                      <img
+                      <Image
                         src={article.featured_image || "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/4ef2586e-3849-4b34-95a4-7e7047fb7498.png"}
                         alt={article.title}
+                        width={400}
+                        height={300}
                         className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;

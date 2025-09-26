@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -55,7 +55,7 @@ export default function GalleryManagement() {
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 
   // Fetch gallery items
-  const fetchGallery = async () => {
+  const fetchGallery = useCallback(async () => {
     try {
       const params = new URLSearchParams();
       if (selectedCategory !== 'all') {
@@ -76,11 +76,11 @@ export default function GalleryManagement() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedCategory]);
 
   useEffect(() => {
     fetchGallery();
-  }, [selectedCategory]);
+  }, [fetchGallery]);
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -158,7 +158,6 @@ export default function GalleryManagement() {
 
   // Generate placeholder image URL
   const generatePlaceholderUrl = (title: string, category: string) => {
-    const encodedTitle = encodeURIComponent(title.replace(/\s+/g, '+'));
     const encodedCategory = encodeURIComponent(category.replace(/\s+/g, '+'));
     return `https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c13d7724-b01e-4331-b562-fa23064a5c51.png}+${encodedCategory}+Murbay+Konveksi+Gallery`;
   };
@@ -247,16 +246,18 @@ export default function GalleryManagement() {
                         ))}
                       </SelectContent>
                     </Select>
+                  </div>
+                  
                   <div className="grid gap-2">
                     <Label>Upload Gambar</Label>
                     <ImageUpload
-                      value={uploadedImages[0] || ''}
-                      onChange={(url) => setUploadedImages([url])}
+                      value={uploadedImages.length > 0 ? uploadedImages[0] : ''}
+                      onChange={(newImage) => setUploadedImages([newImage])}
                       onRemove={() => setUploadedImages([])}
                       placeholder="Upload gambar galeri"
                     />
                     
-                    {!uploadedImages[0] && (
+                    {uploadedImages.length === 0 && (
                       <div className="space-y-2 mt-4">
                         <Label htmlFor="image_url">Atau URL Gambar</Label>
                         <Textarea
@@ -271,37 +272,23 @@ export default function GalleryManagement() {
                         </p>
                       </div>
                     )}
-                  </div>
-                  {!uploadedImages[0] && formData.image_url && (
-                    <div className="grid gap-2">
-                      <Label>Preview Gambar</Label>
-                      <div className="border rounded-lg p-4 bg-gray-50">
-                        <img
-                          src={formData.image_url}
-                          alt="Preview"
-                          className="w-full h-48 object-cover rounded"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = generatePlaceholderUrl(formData.title || 'Gallery Item', formData.category);
-                          }}
-                        />
+                    {uploadedImages.length === 0 && formData.image_url && (
+                      <div className="grid gap-2">
+                        <Label>Preview Gambar</Label>
+                        <div className="border rounded-lg p-4 bg-gray-50">
+                          <img
+                            src={formData.image_url}
+                            alt="Preview"
+                            className="w-full h-48 object-cover rounded"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = generatePlaceholderUrl(formData.title || 'Gallery Item', formData.category);
+                            }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-                <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                    Batal
-                  </Button>
-                  <Button type="submit">
-                    {editingItem ? 'Update Item Galeri' : 'Buat Item Galeri'}
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </div>
-        </div>
+                    )}
+                  </div>
                 </div>
                 <DialogFooter>
                   <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>

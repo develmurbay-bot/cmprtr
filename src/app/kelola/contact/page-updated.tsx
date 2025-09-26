@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -56,7 +56,7 @@ export default function ContactManagementPage() {
   const itemsPerPage = 10;
 
   // Fetch contacts
-  const fetchContacts = async () => {
+  const fetchContacts = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
@@ -79,11 +79,11 @@ export default function ContactManagementPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter]);
 
   useEffect(() => {
     fetchContacts();
-  }, [statusFilter]);
+  }, [fetchContacts]);
 
   // Handle status update
   const handleStatusUpdate = async (e: React.FormEvent) => {

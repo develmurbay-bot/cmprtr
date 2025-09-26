@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -59,7 +59,7 @@ export default function FAQManagementPage() {
   }, [user, router]);
 
   // Fetch FAQs
-  const fetchFaqs = async () => {
+  const fetchFaqs = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
@@ -81,13 +81,13 @@ export default function FAQManagementPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [categoryFilter]);
 
   useEffect(() => {
     if (user) {
       fetchFaqs();
     }
-  }, [user, categoryFilter]);
+  }, [user, fetchFaqs]);
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {

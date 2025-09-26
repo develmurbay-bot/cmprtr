@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -21,20 +21,23 @@ interface NewsArticle {
 
 export default function NewsDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const [article, setArticle] = useState<NewsArticle | null>(null);
   const [relatedArticles, setRelatedArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
+  // Create refs to store the latest versions of functions
+  const fetchArticleRef = useRef<() => Promise<void>>(async () => {});
+  const fetchRelatedArticlesRef = useRef<() => Promise<void>>(async () => {});
+
   useEffect(() => {
-    if (params.id) {
-      fetchArticle();
-      fetchRelatedArticles();
+    if (params.id && fetchArticleRef.current && fetchRelatedArticlesRef.current) {
+      fetchArticleRef.current();
+      fetchRelatedArticlesRef.current();
     }
   }, [params.id]);
 
-  const fetchArticle = async () => {
+  const fetchArticle = useCallback(async () => {
     try {
       const response = await fetch(`/api/news/${params.id}`);
       const data = await response.json();
@@ -53,9 +56,9 @@ export default function NewsDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.id]);
 
-  const fetchRelatedArticles = async () => {
+  const fetchRelatedArticles = useCallback(async () => {
     try {
       const response = await fetch('/api/news?status=published&limit=3');
       const data = await response.json();
@@ -68,7 +71,13 @@ export default function NewsDetailPage() {
     } catch (error) {
       console.error('Error fetching related articles:', error);
     }
-  };
+  }, [params.id]);
+
+  // Update the refs when the functions change
+  useEffect(() => {
+    fetchArticleRef.current = fetchArticle;
+    fetchRelatedArticlesRef.current = fetchRelatedArticles;
+  }, [fetchArticle, fetchRelatedArticles]);
 
   const updateMetaTags = (article: NewsArticle) => {
     // Update page title

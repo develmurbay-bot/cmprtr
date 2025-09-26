@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir, unlink } from 'fs/promises';
+import { writeFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
 import { randomUUID } from 'crypto';
 
 // Simulate watermark application (in real app, you'd use image processing library)
-async function applyWatermark(buffer: Buffer, _watermarkText: string, _enabled: boolean): Promise<Buffer> {
+async function applyWatermark(buffer: Buffer, _watermarkText: string, _enabled: boolean): Promise<Buffer> { // eslint-disable-line @typescript-eslint/no-unused-vars
   // In a real implementation, you would use libraries like:
   // - sharp for Node.js image processing
   // - canvas for drawing watermarks
@@ -18,16 +18,35 @@ async function applyWatermark(buffer: Buffer, _watermarkText: string, _enabled: 
 
 async function getWatermarkSettings() {
   try {
-    // Get watermark settings from database using internal API route
-    // This avoids making external HTTP requests during build/deployment
-    const response = await fetch('/api/settings');
+    // Get watermark settings from database
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000'}/api/settings`);
     const data = await response.json();
     
+    interface Setting {
+      key: string;
+      value: unknown;
+    }
+
+    interface WatermarkSettings {
+      watermark_enabled?: string | boolean;
+      watermark_text?: string;
+    }
+
     if (data.success) {
-      const settings: any = {};
-      data.settings.forEach((setting: any) => {
-        settings[setting.key] = setting.value;
-      });
+      const settings: WatermarkSettings = {};
+      if (Array.isArray(data.settings)) {
+        data.settings.forEach((setting: Setting) => {
+          if (typeof setting === 'object' && setting.key && typeof setting.key === 'string') {
+            if(setting.key in settings) {
+              settings[setting.key as keyof WatermarkSettings] = typeof setting.value === 'string' 
+                ? setting.value 
+                : typeof setting.value === 'boolean' 
+                  ? String(setting.value) 
+                  : '';
+            }
+          }
+        });
+      }
       
       return {
         enabled: settings.watermark_enabled === 'true' || settings.watermark_enabled === true,
@@ -74,7 +93,7 @@ export async function POST(request: NextRequest) {
 
     // Get file buffer
     const bytes = await file.arrayBuffer();
-    let buffer = Buffer.from(bytes);
+    let buffer: Buffer = Buffer.from(bytes);
 
     // Get watermark settings
     const watermarkSettings = await getWatermarkSettings();
@@ -144,6 +163,7 @@ export async function DELETE(request: NextRequest) {
 
     // Check if file exists and delete it
     if (existsSync(filePath)) {
+      const { unlink } = await import('fs/promises');
       await unlink(filePath);
       
       return NextResponse.json({
@@ -152,8 +172,9 @@ export async function DELETE(request: NextRequest) {
       });
     } else {
       return NextResponse.json({
-        success: false, message: 'File not found'
-      }, { status: 404 });
+        success: false, message: 'File not found' },
+        { status: 404 }
+      );
     }
 
   } catch (error) {

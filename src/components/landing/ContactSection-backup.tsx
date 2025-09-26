@@ -14,6 +14,7 @@ interface Settings {
   social_facebook: string;
   social_instagram: string;
   social_twitter: string;
+  company_email?: string;
 } 
 // settings?.whatsapp_number
 interface CaptchaQuestion {

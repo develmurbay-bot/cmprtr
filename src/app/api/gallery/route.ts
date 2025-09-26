@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category');
     
     let query = 'SELECT * FROM gallery';
-    const params: (string | number)[] = [];
+    const params: string[] = [];
     
     if (category && category !== 'all') {
       query += ' WHERE category = ?';

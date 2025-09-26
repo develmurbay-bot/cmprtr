@@ -61,19 +61,19 @@ export default function FAQSection() {
         const data = await response.json();
         if (data.success && data.settings) {
           // Convert array format to object
-          const settingsObj: any = {};
-          data.settings.forEach((setting: any) => {
+          const settingsObj: Record<string, string> = {};
+          data.settings.forEach((setting: { key: string; value: string }) => {
             settingsObj[setting.key] = setting.value;
           });
           
           setSettings({
             whatsapp_number: settingsObj.whatsapp_number || '6281356822255',
             whatsapp_message_template: settingsObj.whatsapp_message_template || 'Halo! Saya tertarik dengan layanan Anda.',
-            whatsapp_enabled: settingsObj.whatsapp_enabled === 'true' || settingsObj.whatsapp_enabled === true
+            whatsapp_enabled: settingsObj.whatsapp_enabled === 'true' || settingsObj.whatsapp_enabled === '1' || settingsObj.whatsapp_enabled === 'yes' || settingsObj.whatsapp_enabled === 'on'
           });
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.warn('Failed to fetch settings for FAQ WhatsApp button:', error);
     }
   };
@@ -178,7 +178,7 @@ export default function FAQSection() {
 
             {filteredFAQs.length === 0 && selectedCategory !== 'all' && (
               <div className="text-center py-8">
-                <p className="text-gray-500">Tidak ada FAQ untuk kategori "{selectedCategory}".</p>
+                <p className="text-gray-500">{'Tidak ada FAQ untuk kategori "' + selectedCategory + '".'}</p>
               </div>
             )}
           </>

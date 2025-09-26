@@ -40,7 +40,22 @@ export async function GET(request: NextRequest) {
     }
 
     const totalResult = db.query(countQuery, countParams);
-    const total = totalResult[0]?.total || 0;
+    // Extract total value - depending on database driver, it might be in different formats
+    let total = 0;
+    if (totalResult && totalResult.length > 0) {
+      const row = totalResult[0];
+      // Handle different possible structures of the count result
+      if (typeof row === 'object' && row !== null) {
+        if ('total' in row) {
+          const rowTotal = row.total;
+          total = typeof rowTotal === 'number' ? rowTotal : typeof rowTotal === 'string' ? parseInt(rowTotal) || 0 : 0;
+        } else if (Object.values(row)[0] !== undefined) {
+          // If the count is returned as the first value in the row object
+          const firstValue = Object.values(row)[0];
+          total = typeof firstValue === 'number' ? firstValue : typeof firstValue === 'string' ? parseInt(firstValue) || 0 : 0;
+        }
+      }
+    }
 
     // Get status counts for dashboard
     const statusCounts = db.query(`

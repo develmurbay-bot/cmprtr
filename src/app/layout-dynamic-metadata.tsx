@@ -8,18 +8,17 @@ const inter = Inter({ subsets: ['latin'] });
 // Function to fetch settings for metadata
 async function getSettings() {
   try {
-    // Use internal API route to avoid external requests during build
-    // This ensures the fetch works both during build time and runtime
-    const response = await fetch('/api/settings', {
-      next: { revalidate: 3600 } // Cache for 1 hour, safe for static generation
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:8000';
+    const response = await fetch(`${baseUrl}/api/settings`, {
+      next: { revalidate: 300 } // Cache for 1 hour, safe for static generation
     });
     
     if (response.ok) {
       const data = await response.json();
       if (data.success && data.settings) {
         // Convert array format to object
-        const settingsObj: any = {};
-        data.settings.forEach((setting: any) => {
+        const settingsObj: Record<string, string> = {};
+        data.settings.forEach((setting: { key: string; value: string }) => {
           settingsObj[setting.key] = setting.value;
         });
         return settingsObj;

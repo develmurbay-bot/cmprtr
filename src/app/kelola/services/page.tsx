@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import AdminNavigation from '@/components/kelola/AdminNavigation';
 import ImageUpload from '@/components/kelola/ImageUpload';
+import Image from 'next/image';
 
 interface Service {
   id: number;
@@ -60,7 +61,7 @@ export default function ServicesManagement() {
       } else {
         setServices([]);
       }
-    } catch (err) {
+    } catch {
       setError('Failed to load services');
       setServices([]);
     } finally {
@@ -93,7 +94,7 @@ export default function ServicesManagement() {
         const data = await response.json();
         setError(data.error || 'Operation failed');
       }
-    } catch (err) {
+    } catch {
       setError('Network error occurred');
     }
   };
@@ -112,10 +113,8 @@ export default function ServicesManagement() {
     if (!confirm('Are you sure you want to delete this service?')) return;
 
     try {
-      const response = await fetch('/api/services', {
+      const response = await fetch(`/api/services?id=${id}`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }),
       });
 
       if (response.ok) {
@@ -123,7 +122,7 @@ export default function ServicesManagement() {
       } else {
         setError('Failed to delete service');
       }
-    } catch (err) {
+    } catch {
       setError('Network error occurred');
     }
   };
@@ -281,9 +280,11 @@ export default function ServicesManagement() {
                           </TableCell>
                           <TableCell>
                             {service.image_url ? (
-                              <img
+                              <Image
                                 src={service.image_url}
                                 alt={service.title}
+                                width={64}
+                                height={64}
                                 className="w-16 h-16 object-cover rounded-lg"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement;
