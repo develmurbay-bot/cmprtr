@@ -1,6 +1,6 @@
 import { Database } from 'better-sqlite3';
 import sqlite3 from 'better-sqlite3';
-import { Pool } from 'pg';
+// import { Pool } from 'pg';
 import { DATABASE_TYPE, DATABASE_URL } from './config';
 
 // Database interface for abstraction
@@ -105,8 +105,8 @@ class SQLiteConnection implements DatabaseConnection {
     // Settings table
     this.db.exec(`
       CREATE TABLE IF NOT EXISTS settings (
-        setting_key TEXT PRIMARY KEY,
-        setting_value TEXT,
+        key TEXT PRIMARY KEY,
+        value TEXT,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
@@ -155,30 +155,33 @@ class SQLiteConnection implements DatabaseConnection {
 
     // Insert default settings if not exist
     const defaultSettings = [
-      ['company_name', 'Murbay Konveksi'],
-      ['company_tagline', 'Jagonya Konveksi'],
+      ['company_name', 'Nama Perusahaan'],
+      ['company_tagline', 'Jagonya bisnis Anda'],
       ['company_phone', '+62 813-5682-2255'],
-      ['company_email', 'info@murbaykonveksi.com'],
+      ['company_email', 'info@emailusaha.com'],
       ['company_address', 'Jl. Contoh Alamat Perusahaan'],
       ['company_city', 'Bandar Lampung'],
       ['whatsapp_number', '6281356822255'],
       ['whatsapp_message', 'Halo! Saya tertarik dengan layanan konveksi Anda.'],
       ['whatsapp_enabled', 'true'],
-      ['meta_title', 'Murbay Konveksi - Spesialis Garmen & Konveksi Berkualitas Tinggi'],
-      ['meta_description', 'Perusahaan konveksi terpercaya yang melayani berbagai kebutuhan fashion dan garmen dengan komitmen tinggi terhadap kualitas dan kepuasan pelanggan.']
+      ['meta_title', 'Nama Usaha Default- spesialis apa neeh'],
+      ['meta_description', 'mitra terpercaya dengan komitmen tinggi terhadap kualitas dan kepuasan pelanggan.']
     ];
 
     for (const [key, value] of defaultSettings) {
-      const exists = this.db.prepare('SELECT 1 FROM settings WHERE setting_key = ?').get(key);
+      const exists = this.db.prepare('SELECT 1 FROM settings WHERE key = ?').get(key);
       if (!exists) {
-        this.db.prepare('INSERT INTO settings (setting_key, setting_value) VALUES (?, ?)').run(key, value);
+        this.db.prepare('INSERT INTO settings (key, value) VALUES (?, ?)').run(key, value);
       }
     }
   }
 
   async query(sql: string, params: any[] = []): Promise<any[]> {
     try {
-      const stmt = this.db.prepare(sql);
+      // Handle settings table column name differences between SQLite and PostgreSQL
+      const modifiedSql = sql.replace(/setting_key/g, 'key').replace(/setting_value/g, 'value');
+      
+      const stmt = this.db.prepare(modifiedSql);
       if (params.length > 0) {
         return stmt.all(...params);
       } else {
@@ -194,7 +197,10 @@ class SQLiteConnection implements DatabaseConnection {
 
   async run(sql: string, params: any[] = []): Promise<{ lastInsertRowid: number; changes: number }> {
     try {
-      const stmt = this.db.prepare(sql);
+      // Handle settings table column name differences between SQLite and PostgreSQL
+      const modifiedSql = sql.replace(/setting_key/g, 'key').replace(/setting_value/g, 'value');
+      
+      const stmt = this.db.prepare(modifiedSql);
       const result = params.length > 0 ? stmt.run(...params) : stmt.run();
       return {
         lastInsertRowid: Number(result.lastInsertRowid),
@@ -386,7 +392,10 @@ class PostgreSQLConnection implements DatabaseConnection {
 
   async query(sql: string, params: any[] = []): Promise<any[]> {
     try {
-      const result = await this.pool.query(sql, params);
+      // Handle settings table column name differences between SQLite and PostgreSQL
+      const modifiedSql = sql.replace(/key/g, 'setting_key').replace(/value/g, 'setting_value');
+      
+      const result = await this.pool.query(modifiedSql, params);
       return result.rows;
     } catch (error) {
       console.error('Database query error:', error);
@@ -398,8 +407,11 @@ class PostgreSQLConnection implements DatabaseConnection {
 
   async run(sql: string, params: any[] = []): Promise<{ lastInsertRowid: number; changes: number }> {
     try {
+      // Handle settings table column name differences between SQLite and PostgreSQL
+      const modifiedSql = sql.replace(/key/g, 'setting_key').replace(/value/g, 'setting_value');
+      
       // Execute the query
-      const result = await this.pool.query(sql, params);
+      const result = await this.pool.query(modifiedSql, params);
       
       // For PostgreSQL, we'll return the rowCount as changes and use a placeholder for lastInsertRowid
       // since PostgreSQL doesn't have the same concept as SQLite
