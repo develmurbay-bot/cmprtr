@@ -1,6 +1,6 @@
-# Murbay Konveksi - Company Profile Web Application
+# Company Profile Web Application | gak bisa
 
-A modern, responsive company profile and content management system built with Next.js 15+, TypeScript, and shadcn/ui components for Murbay Konveksi garment manufacturing company.
+A modern, responsive company profile and content management system built with Next.js 15+, TypeScript, and shadcn/ui components for company profile.
 
 ## 🌟 Features
 
